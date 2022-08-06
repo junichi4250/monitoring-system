@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func pingTimeout(breakServer []*Server, allServer []*ServerResponse, N *int) (responseBreakServer []*Server, responseAllServer []*ServerResponse) {
+func pingTimeout(breakServer []*Server, allServer []*ServerResponse, N *int) (responseAllServer []*ServerResponse) {
 	data, _ :=  os.Open("access.log")
 	defer data.Close()
 	
@@ -56,7 +56,18 @@ func pingTimeout(breakServer []*Server, allServer []*ServerResponse, N *int) (re
 		})
 	}
 
-	return breakServer, allServer
+	for _, v := range breakServer {
+		// 故障期間が0になる場合は続けて2回以上timeoutした時なので表示からは除く
+		if v.breakTime == 0 {
+			continue
+		}
+		// 故障しているサーバーのipアドレス表示
+		fmt.Println("故障サーバーip:" , v.ip)
+		// 故障期間の出力
+		fmt.Println("故障期間", v.breakTime , "ms")
+	}
+
+	return allServer
 }
 
 // 配列に指定した文字が何番目に含まれているか
