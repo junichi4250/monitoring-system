@@ -1,71 +1,26 @@
 package main
 
 import (
-	"bufio"
 	"flag"
 	"fmt"
-	"log"
-	"os"
-	"strconv"
-	"strings"
 )
 
-type Server struct {
-	recordTime string
-	ip string
-	responseTime string
-	breakTime int
-	timeoutCount int
-}
-
 func main() {
-	var N = flag.Int("timeout", 5, "timeout flag")
+	var (
+		N = flag.Int("timeout", 5, "timeout flag") // timeout回数
+		m = flag.Int("responseTimeCount", 2, "responseTimeCount flag") // 平均応答時間を計測する回数
+		t = flag.Int("averageResponseTime", 10, "averageResponseTime flag") // 平均応答時間
+	)
 	flag.Parse()
 
-	data, _ :=  os.Open("access.log")
-	defer data.Close()
-	scanner := bufio.NewScanner(data)
+	breakServer := []*Server{}
+	allServer := []*ServerResponse{}
 
-	server := []*Server{}
+	breakServer, allServer = pingTimeout(breakServer, allServer, N)
 
-	for scanner.Scan(){
-		if strings.HasSuffix(scanner.Text(), "-") {
-			server = append(server, &Server{
-				strings.Split(scanner.Text(), ",")[0],
-				strings.Split(scanner.Text(), ",")[1],
-				strings.Split(scanner.Text(), ",")[2],
-				0,
-				0,
-			})
-		}
+	overload(allServer, m, t)
 
-		// pingを送るサーバーが故障していたものかチェック
-		index := include(server, strings.Split(scanner.Text(), ",")[1])
-		if index != -1 {
-			if !strings.HasSuffix(scanner.Text(), "-") {
-				// 故障が改善していれば故障期間を測定
-				recordStartTime, err := strconv.Atoi(server[index].recordTime)
-				if err != nil {
-					log.Fatal(err)
-				}
-				recordEndTime, err := strconv.Atoi(strings.Split(scanner.Text(), ",")[0])
-				if err != nil {
-					log.Fatal(err)
-				}
-				server[index].breakTime = recordEndTime - recordStartTime
-			} else {
-				// 故障が改善していなければtimeout回数を増やす
-				server[index].timeoutCount++
-				if server[index].timeoutCount >= *N {
-					// n回以上タイムアウトの時は故障
-					fmt.Println(*N, "回以上タイムアウトしました。")
-					fmt.Println("ipアドレス:", server[index].ip)
-				}
-			}
-		}
-	}
-
-	for _, v := range server {
+	for _, v := range breakServer {
 		// 故障期間が0になる場合は続けて2回以上timeoutした時なので表示からは除く
 		if v.breakTime == 0 {
 			continue
@@ -73,20 +28,6 @@ func main() {
 		// 故障しているサーバーのipアドレス表示
 		fmt.Println("故障サーバーip:" , v.ip)
 		// 故障期間の出力
-		fmt.Println("故障期間", v.breakTime)
+		fmt.Println("故障期間", v.breakTime , "ms")
 	}
-}
-
-// 配列に指定した文字が何番目に含まれているか
-func include(server []*Server, target string) int {
-	for num, v := range server {
-		// すでに設定されているものは除く
-		if v.breakTime != 0 {
-			continue
-		}
-		if v.ip == target {
-			return num
-		}
-	}
-	return -1
 }
