@@ -74,7 +74,7 @@ func breakDown(allIp []string, server []*Server, breakServer []*BreakServer, tim
 	}
 
 	// timeout
-	fmt.Println(*N, "回以上タイムアウト")
+	fmt.Println(*N, "回以上連続タイムアウト")
 	fmt.Println("ipアドレス:")
 	for _, v  := range timeoutServer {
 		fmt.Println(v.ip)
