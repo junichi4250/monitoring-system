@@ -1,16 +1,34 @@
 # 環境構築
 
 ソースコードをダウンロード。
+
 ```bash
 git clone https://github.com/junichi4250/monitoring-system.git
 ```
+
+docker 立ち上げ
+
+```bash
+docker-compose up -d --build
+```
+
 # 実行方法
+
+コンテナの中に入る
+
+```bash
+docker-compose exec golang sh
+```
+
+実行
+
 ```bash
 go run *.go
 ```
 
 # 実行結果
-## 課題1
+
+## 課題 1
 
 ```bash
 故障サーバーip: 10.20.30.1/16
