@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func breakDown(allIp []string, server []*Server, breakServer []*BreakServer) {
+func breakDown(allIp []string, server []*Server, breakServer []*BreakServer, timeoutServer []*TimeoutServer, N *int) {
 	data, _ :=  os.Open("access.log")
 	defer data.Close()
 	scanner := bufio.NewScanner(data)
@@ -25,6 +25,7 @@ func breakDown(allIp []string, server []*Server, breakServer []*BreakServer) {
 				strings.Split(scanner.Text(), ",")[1],
 				strings.Split(scanner.Text(), ",")[2],
 				true,
+				0,
 			})
 		}
 
@@ -40,6 +41,17 @@ func breakDown(allIp []string, server []*Server, breakServer []*BreakServer) {
 					server[index].recordTime,
 					strings.Split(scanner.Text(), ",")[0],
 				})
+			} else {
+				// 故障が改善していなければtimeout回数を増やす
+				server[index].timeoutCount++
+				if server[index].timeoutCount >= *N {
+					// n回以上タイムアウトの時は故障
+					if !includeIpTimeoutServer(timeoutServer, server[index].ip) {
+						timeoutServer = append(timeoutServer, &TimeoutServer{
+							server[index].ip,
+						})
+					}
+				}
 			}
 		}
 	}
@@ -59,6 +71,13 @@ func breakDown(allIp []string, server []*Server, breakServer []*BreakServer) {
 				fmt.Println(v.breakStartTime, "~", v.breakEndTime)
 			}
 		}
+	}
+
+	// timeout
+	fmt.Println(*N, "回以上タイムアウト")
+	fmt.Println("ipアドレス:")
+	for _, v  := range timeoutServer {
+		fmt.Println(v.ip)
 	}
 }
 
@@ -94,4 +113,14 @@ func include(server []*Server, target string) int {
 		}
 	}
 	return -1
+}
+
+// 配列に指定した文字が含まれているか
+func includeIpTimeoutServer(timeoutServer []*TimeoutServer, ip string) bool {
+	for _, v := range timeoutServer {
+		if v.ip == ip {
+			return true
+		}
+	}
+	return false
 }
