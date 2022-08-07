@@ -10,10 +10,13 @@ func main() {
 	t := flag.Int("averageResponseTime", 10, "averageResponseTime flag") // 平均応答時間
 	flag.Parse()
 
-	breakServer := []*Server{}
+	allIp := []string{}
+	server := []*Server{}
+	breakServer := []*BreakServer{}
+	timeoutServer := []*TimeoutServer{}
 	allServer := []*ServerResponse{}
-
-	allServer = pingTimeout(breakServer, allServer, N)
-
+	
+	allServer = breakDown(allIp, server, breakServer, timeoutServer, allServer, N)
+	
 	overload(allServer, m, t)
 }

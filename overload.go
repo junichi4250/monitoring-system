@@ -11,7 +11,7 @@ func overload(allServer []*ServerResponse, m *int, t *int) {
 	searchedIp := make([]string, 0)
 	for i := len(allServer); i > 0; i-- {
 		// 調査済みのipは除く
-		if includeIp(searchedIp, allServer[i - 1].ip) != -1 {
+		if includeIp(searchedIp, allServer[i - 1].ip) {
 			continue
 		}
 		// ipが何回出現するかカウント
@@ -62,14 +62,4 @@ func overload(allServer []*ServerResponse, m *int, t *int) {
 		// 調査したipの置き場
 		searchedIp = append(searchedIp, allServer[i - 1].ip)
 	} 
-}
-
-// 配列に指定したipが何番目に含まれているか
-func includeIp(searchedIp []string, target string) int {
-	for num, v := range searchedIp {
-		if v == target {
-			return num
-		}
-	}
-	return -1
 }

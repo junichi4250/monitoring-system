@@ -4,8 +4,18 @@ type Server struct {
 	recordTime string
 	ip string
 	responseTime string
-	breakTime int
+	failuare bool
 	timeoutCount int
+}
+
+type BreakServer struct {
+	ip string
+	breakStartTime string
+	breakEndTime string
+}
+
+type TimeoutServer struct {
+	ip string
 }
 
 type ServerResponse struct {
