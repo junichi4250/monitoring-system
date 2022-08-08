@@ -51,3 +51,13 @@ ip: 192.168.1.2/24 は過負荷状態です。
 # 内容補足
 
 故障しているサーバーのみ実行結果に出力されるようにしています。
+
+# ディレクトリ構成
+```bash
+└── monitoring-system
+    ├── main.go.     main
+    ├── model.go     serverのstructを管理
+    ├── breakDown.go 故障サーバーと故障期間を出力。タイムアウト処理
+    ├── overload.go  過負荷状態のサーバーを出力
+    └── access.log   アクセスログ
+```
