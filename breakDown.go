@@ -7,15 +7,18 @@ import (
 	"strings"
 )
 
-func breakDown(allIp []string, server []*Server, breakServer []*BreakServer, timeoutServer []*TimeoutServer, allServer []*ServerResponse, N *int) (allServerResponse []*ServerResponse) {
+func breakDown(allIp []string, server []*Server, breakServer []*BreakServer, timeoutServer []*TimeoutServer, allServer []*Server, N *int) []*Server {
 	data, _ :=  os.Open("access.log")
 	defer data.Close()
 	scanner := bufio.NewScanner(data)
 	
 	for scanner.Scan(){
-		allServer = append(allServer, &ServerResponse{
+		allServer = append(allServer, &Server{
+			strings.Split(scanner.Text(), ",")[0],
 			strings.Split(scanner.Text(), ",")[1],
 			strings.Split(scanner.Text(), ",")[2],
+			true,
+			0,
 		})
 
 		// 含まれていなければipリストに追加

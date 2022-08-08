@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func overload(allServer []*ServerResponse, m *int, t *int) {
+func overload(allServer []*Server, m *int, t *int) {
 	// 調査したipの配列
 	searchedIp := make([]string, 0)
 	for i := len(allServer); i > 0; i-- {
@@ -62,4 +62,5 @@ func overload(allServer []*ServerResponse, m *int, t *int) {
 		// 調査したipの置き場
 		searchedIp = append(searchedIp, allServer[i - 1].ip)
 	} 
+	fmt.Println("------------------------")
 }

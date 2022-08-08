@@ -14,9 +14,13 @@ func main() {
 	server := []*Server{}
 	breakServer := []*BreakServer{}
 	timeoutServer := []*TimeoutServer{}
-	allServer := []*ServerResponse{}
+	allServer := []*Server{}
+	subnetServer := []*SubnetServer{}
+	breakSubnetServer := []*BreakSubnetServer{}
 	
 	allServer = breakDown(allIp, server, breakServer, timeoutServer, allServer, N)
 	
 	overload(allServer, m, t)
+
+	subnet(allServer, subnetServer, breakSubnetServer, N)
 }

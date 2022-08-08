@@ -18,7 +18,12 @@ type TimeoutServer struct {
 	ip string
 }
 
-type ServerResponse struct {
-	ip string
-	responseTime string
+type SubnetServer struct {
+	subnet string
+}
+
+type BreakSubnetServer struct {
+	subnet string
+	breakStartTime string
+	breakEndTime string
 }
