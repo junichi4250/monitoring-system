@@ -44,3 +44,12 @@ go run *.go
 # 内容補足
 
 故障しているサーバーのみ実行結果に出力されるようにしています。
+
+# ディレクトリ構成
+```bash
+└── monitoring-system
+    ├── main.go.     main
+    ├── model.go     serverのstructを管理
+    ├── breakDown.go 故障サーバーと故障期間を出力している
+    └── access.log   アクセスログ
+```
